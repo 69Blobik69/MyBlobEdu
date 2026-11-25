@@ -1,0 +1,1329 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StudyPet: Cute RPG</title>
+    <link rel="stylesheet" href="style/casino.css" />
+    <link rel="stylesheet" href="style/main.css?v=20261118e" />
+    <link rel="stylesheet" href="style/notes.css" />
+    <link rel="stylesheet" href="style/other.css" />
+    <link rel="stylesheet" href="style/shop.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Nunito:wght@400;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Dancing+Script:wght@400;700&family=Lobster&family=Montserrat:wght@400;700&family=Pacifico&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Roboto+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .quiz-creator-item input,
+      .quiz-creator-item div {
+        box-sizing: border-box;
+      }
+      .questions-scroll-area {
+        max-height: 60vh;
+        overflow-y: auto;
+        padding: 10px;
+      }
+      input[type="radio"] {
+        accent-color: #10b981;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <input type="color" id="led-color-picker" hidden />
+    <audio id="bg-music" src="add/music.mp3" loop></audio>
+    <input type="file" id="poster-upload-input" accept="image/*" hidden />
+
+    <button id="mobile-menu-toggle" class="mobile-menu-btn" aria-label="Menu">
+      <span class="material-symbols-rounded">menu</span>
+    </button>
+
+    <nav class="sidebar" id="sidebar">
+      <div class="logo">
+        <h2>StudyPet 🌿</h2>
+      </div>
+      <div class="nav-links">
+        <button
+          onclick="switchTab('home', this)"
+          data-tab="home"
+          class="nav-btn active"
+        >
+          <span class="material-symbols-rounded">home</span> Dom
+        </button>
+        <button
+          onclick="switchTab('quests', this)"
+          data-tab="quests"
+          class="nav-btn"
+        >
+          <span class="material-symbols-rounded">assignment_turned_in</span>
+          Zadania
+        </button>
+        <button
+          onclick="switchTab('planner', this)"
+          data-tab="planner"
+          class="nav-btn"
+        >
+          <span class="material-symbols-rounded">calendar_month</span> Grafik
+        </button>
+        <button
+          onclick="switchTab('focus', this)"
+          data-tab="focus"
+          class="nav-btn"
+        >
+          <span class="material-symbols-rounded">timer</span> Skupienie
+        </button>
+        <button
+          onclick="switchTab('history', this)"
+          data-tab="history"
+          class="nav-btn"
+        >
+          <span class="material-symbols-rounded">history</span> Historia
+        </button>
+        <button
+          onclick="switchTab('library', this)"
+          data-tab="library"
+          class="nav-btn"
+        >
+          <span class="material-symbols-rounded">menu_book</span> Zeszyty
+        </button>
+        <button
+          onclick="switchTab('shop', this)"
+          data-tab="shop"
+          class="nav-btn"
+        >
+          <span class="material-symbols-rounded">storefront</span> Sklep
+        </button>
+        <button
+          onclick="switchTab('casino', this)"
+          data-tab="casino"
+          class="nav-btn"
+          style="color: #db2777"
+        >
+          <span class="material-symbols-rounded">casino</span> Kasyno
+        </button>
+      </div>
+      <div class="sidebar-footer">
+        <div class="currency-box">
+          <span>💎</span><span id="coin-display">0</span>
+        </div>
+        <div class="level-box-container">
+          <div class="level-text">Lvl <span id="level-display">1</span></div>
+          <div class="xp-bar-bg">
+            <div class="xp-bar-fill" id="xp-bar-fill"></div>
+          </div>
+          <div class="xp-text" id="xp-text">0 / 100 XP</div>
+        </div>
+      </div>
+    </nav>
+
+    <main class="main-content">
+      <div id="confetti-container"></div>
+
+      <section id="section-home" class="view-section active">
+        <div class="room-container">
+          <div class="room-wall"></div>
+          <div class="room-floor"></div>
+          <div id="room-decor-layer"></div>
+          <div class="panda-container">
+            <div class="panda-wrapper" id="panda-wrapper">
+              <div id="panda-ears" class="accessory-ears"></div>
+              <div id="panda-hat" class="accessory-hat"></div>
+              <div id="panda-glasses" class="accessory-glasses"></div>
+              <div id="panda-neck" class="accessory-neck"></div>
+              <svg
+                class="panda-svg"
+                id="panda-svg-el"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 200 240"
+              >
+                <ellipse
+                  cx="100"
+                  cy="220"
+                  rx="60"
+                  ry="10"
+                  fill="rgba(0,0,0,0.1)"
+                />
+                <circle cx="50" cy="60" r="22" fill="#333" />
+                <circle cx="150" cy="60" r="22" fill="#333" />
+                <ellipse
+                  cx="40"
+                  cy="150"
+                  rx="25"
+                  ry="20"
+                  fill="#333"
+                  transform="rotate(-20 40 150)"
+                />
+                <ellipse
+                  cx="160"
+                  cy="150"
+                  rx="25"
+                  ry="20"
+                  fill="#333"
+                  transform="rotate(20 160 150)"
+                />
+                <ellipse cx="60" cy="200" rx="28" ry="22" fill="#333" />
+                <ellipse cx="140" cy="200" rx="28" ry="22" fill="#333" />
+                <ellipse cx="100" cy="165" rx="70" ry="60" fill="#fff" />
+                <circle
+                  id="panda-belly"
+                  cx="100"
+                  cy="180"
+                  r="40"
+                  fill="#f9f9f9"
+                  style="cursor: pointer"
+                />
+                <circle cx="100" cy="90" r="65" fill="#fff" />
+                <g class="eye-group">
+                  <ellipse
+                    cx="70"
+                    cy="85"
+                    rx="24"
+                    ry="20"
+                    fill="#333"
+                    transform="rotate(-15 70 85)"
+                  />
+                  <ellipse
+                    cx="130"
+                    cy="85"
+                    rx="24"
+                    ry="20"
+                    fill="#333"
+                    transform="rotate(15 130 85)"
+                  />
+                  <circle cx="72" cy="85" r="6" fill="#fff" />
+                  <circle cx="128" cy="85" r="6" fill="#fff" />
+                  <circle cx="74" cy="83" r="2.5" fill="#fff" opacity="0.9" />
+                  <circle cx="130" cy="83" r="2.5" fill="#fff" opacity="0.9" />
+                </g>
+                <ellipse cx="100" cy="100" rx="9" ry="6" fill="#333" />
+                <path
+                  id="panda-mouth"
+                  d="M 92 112 Q 100 118 108 112"
+                  stroke="#333"
+                  stroke-width="3"
+                  fill="none"
+                  stroke-linecap="round"
+                />
+                <ellipse
+                  cx="55"
+                  cy="108"
+                  rx="12"
+                  ry="7"
+                  fill="#ffb7b2"
+                  opacity="0.5"
+                />
+                <ellipse
+                  cx="145"
+                  cy="108"
+                  rx="12"
+                  ry="7"
+                  fill="#ffb7b2"
+                  opacity="0.5"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="section-quests" class="view-section hidden">
+        <div class="section-header">
+          <h2>Zadania Dzienne ✨</h2>
+          <div class="quest-info">Zresetują się o północy!</div>
+        </div>
+        <div id="quests-list" class="quests-container"></div>
+      </section>
+
+      <section id="section-planner" class="view-section hidden">
+        <div class="section-header">
+          <h2>Twój Stały Grafik 📅</h2>
+        </div>
+        <div class="planner-grid" id="planner-week-view"></div>
+      </section>
+
+      <section id="section-focus" class="view-section hidden">
+        <div
+          id="focus-selection"
+          class="focus-wrapper"
+          style="min-height: 600px"
+        >
+          <h1>Tryb Skupienia 🧠</h1>
+          <p style="color: #888; margin-bottom: 30px">Wybierz metodę nauki:</p>
+          <div style="display: flex; gap: 20px; width: 100%; max-width: 600px">
+            <button
+              onclick="selectFocusMode('classic')"
+              class="shop-cat-card pink-gradient"
+              style="height: 250px; flex: 1"
+            >
+              <span style="font-size: 60px">⏱️</span>
+              <h3>Zwykły Timer</h3>
+              <span style="font-size: 14px; opacity: 0.7">Własny czas</span>
+            </button>
+            <button
+              onclick="selectFocusMode('pomodoro')"
+              class="shop-cat-card purple-gradient"
+              style="height: 250px; flex: 1"
+            >
+              <span style="font-size: 60px">🍅</span>
+              <h3>Pomodoro</h3>
+              <span style="font-size: 14px; opacity: 0.7">25 min + 5 min</span>
+            </button>
+          </div>
+        </div>
+
+        <div
+          id="container-timer-classic"
+          class="focus-wrapper hidden"
+          style="position: relative; min-height: 600px"
+        >
+          <button
+            onclick="backToFocusSelection()"
+            class="btn-back"
+            style="position: absolute; top: 20px; left: 20px"
+          >
+            <span class="material-symbols-rounded">arrow_back</span> Powrót
+          </button>
+
+          <h1 style="margin-top: 40px">Zwykły Timer</h1>
+          <div class="timer-main-box" style="max-width: 500px; height: 350px">
+            <div class="timer-progress-fill" id="focus-progress-bar"></div>
+            <div class="timer-content">
+              <div class="timer-input-mode" id="timer-input-mode">
+                <input
+                  type="text"
+                  id="focus-topic-input"
+                  placeholder="Czego się uczysz?"
+                  class="focus-topic-field"
+                  style="font-size: 22px"
+                />
+                <input
+                  type="number"
+                  id="focus-input-minutes"
+                  placeholder="25"
+                  min="1"
+                  max="180"
+                  style="font-size: 100px"
+                />
+                <div class="timer-label" style="font-size: 24px">minut</div>
+              </div>
+              <div
+                class="timer-display-mode"
+                id="timer-display-mode"
+                style="display: none"
+              >
+                <div
+                  class="timer-topic-display"
+                  id="timer-topic-display"
+                  style="font-size: 28px"
+                >
+                  Temat
+                </div>
+                <div
+                  class="timer-real-display"
+                  id="timer-real-display"
+                  style="font-size: 110px"
+                >
+                  00:00
+                </div>
+                <div class="reward-preview" style="font-size: 20px">
+                  Nagroda: <span id="focus-reward-preview">💎 x0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="timer-actions">
+            <button
+              onclick="startTimer()"
+              id="btn-start"
+              class="btn-primary-lg"
+            >
+              START
+            </button>
+            <button
+              onclick="pauseTimer()"
+              id="btn-pause"
+              class="btn-warning-lg hidden"
+            >
+              PAUZA
+            </button>
+            <button
+              onclick="resumeTimer()"
+              id="btn-resume"
+              class="btn-primary-lg hidden"
+            >
+              WZNOW
+            </button>
+            <button
+              onclick="stopTimer()"
+              id="btn-stop"
+              class="btn-danger-lg"
+              disabled
+            >
+              STOP
+            </button>
+          </div>
+        </div>
+
+        <div
+          id="container-timer-pomodoro"
+          class="focus-wrapper hidden"
+          style="position: relative; min-height: 600px"
+        >
+          <button
+            onclick="backToFocusSelection()"
+            class="btn-back"
+            style="position: absolute; top: 20px; left: 20px"
+          >
+            <span class="material-symbols-rounded">arrow_back</span> Powrót
+          </button>
+
+          <h1 id="pomo-status-text" style="margin-top: 40px">
+            Czas na Naukę! 📚
+          </h1>
+          <div
+            class="timer-main-box"
+            id="pomo-box"
+            style="max-width: 500px; height: 350px"
+          >
+            <div class="timer-progress-fill" id="pomo-progress-bar"></div>
+            <div class="timer-content">
+              <div
+                class="timer-topic-display"
+                id="pomo-session-count"
+                style="font-size: 28px"
+              >
+                Sesja 1/4
+              </div>
+              <div
+                class="timer-real-display"
+                id="pomo-display"
+                style="font-size: 110px"
+              >
+                25:00
+              </div>
+              <div
+                id="pomo-reward-info"
+                class="reward-preview"
+                style="font-size: 20px"
+              >
+                Nagroda za sesję: 💎 5
+              </div>
+            </div>
+          </div>
+          <div class="timer-actions">
+            <button
+              onclick="startPomodoro()"
+              id="btn-pomo-start"
+              class="btn-primary-lg"
+            >
+              START
+            </button>
+            <button
+              onclick="stopPomodoro()"
+              id="btn-pomo-stop"
+              class="btn-danger-lg hidden"
+            >
+              STOP
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section id="section-history" class="view-section hidden">
+        <div class="section-header">
+          <h2>Historia Nauki 📜</h2>
+          <div style="display: flex; gap: 10px">
+            <button
+              onclick="hardReset()"
+              class="btn-back"
+              style="color: white; background: red"
+            >
+              🔴 RESET DANYCH
+            </button>
+            <button
+              onclick="
+                customConfirm('Czy na pewno wyczyścić historię?', clearHistory)
+              "
+              class="btn-back"
+              style="color: #ff8a80"
+            >
+              Wyczyść
+            </button>
+          </div>
+        </div>
+        <div id="history-list" class="history-container"></div>
+      </section>
+
+      <section id="section-library" class="view-section hidden">
+        <div id="view-subjects">
+          <div class="section-header">
+            <h2>Moje Zeszyty 📚</h2>
+            <button onclick="openModal('createSubject')" class="btn-add">
+              + Nowy Zeszyt
+            </button>
+          </div>
+          <div id="subjects-grid" class="classic-grid"></div>
+        </div>
+
+        <div id="view-topics" class="hidden">
+          <div class="section-header">
+            <div class="header-left">
+              <button onclick="goBackToSubjects()" class="btn-back">
+                ◀ Wróć
+              </button>
+              <h2 id="current-subject-name">Przedmiot</h2>
+            </div>
+            <button onclick="openModal('createTopic')" class="btn-add">
+              + Nowy Temat
+            </button>
+          </div>
+          <div id="topics-list" class="list-layout"></div>
+        </div>
+
+        <div id="view-workspace" class="hidden">
+          <div class="section-header">
+            <div class="header-left">
+              <button onclick="goBackToTopics()" class="btn-back">
+                ◀ Tematy
+              </button>
+              <h2 id="current-topic-name">Temat</h2>
+            </div>
+            <div class="workspace-tabs">
+              <button
+                id="tab-notes"
+                class="work-tab active"
+                onclick="switchWorkTab('notes')"
+              >
+                Notatki
+              </button>
+              <button
+                id="tab-flashcards"
+                class="work-tab"
+                onclick="switchWorkTab('materials')"
+              >
+                Materiały
+              </button>
+            </div>
+          </div>
+
+          <div id="work-content-notes">
+            <div class="notes-toolbar">
+              <div class="toolbar-group">
+                <button
+                  onclick="changeNotePage(-1)"
+                  class="tool-btn"
+                  title="Poprzednia strona"
+                >
+                  ◀
+                </button>
+                <span id="note-page-info" class="page-indicator">Strona 1</span>
+                <button
+                  onclick="changeNotePage(1)"
+                  class="tool-btn"
+                  title="Następna strona"
+                >
+                  ▶
+                </button>
+                <button
+                  onclick="addNewNotePage()"
+                  class="tool-btn"
+                  style="color: #8b5cf6"
+                  title="Dodaj nową stronę"
+                >
+                  ✚
+                </button>
+              </div>
+
+              <div class="toolbar-group">
+                <button
+                  onclick="setPaperStyle('lined')"
+                  class="tool-btn"
+                  title="Linie"
+                >
+                  ☰
+                </button>
+                <button
+                  onclick="setPaperStyle('squared')"
+                  class="tool-btn"
+                  title="Kratka"
+                >
+                  ▦
+                </button>
+                <button
+                  onclick="setPaperStyle('blank')"
+                  class="tool-btn"
+                  title="Gładka"
+                >
+                  ▢
+                </button>
+              </div>
+
+              <div class="toolbar-group">
+                <button onclick="formatNote('bold')" class="tool-btn">
+                  <b>B</b>
+                </button>
+                <button onclick="formatNote('italic')" class="tool-btn">
+                  <i>I</i>
+                </button>
+                <select
+                  class="style-select"
+                  onchange="formatNote('fontName', this.value)"
+                  title="Zmień czcionkę"
+                >
+                  <optgroup label="Standardowe">
+                    <option value="Nunito">Nunito (Domyślna)</option>
+                    <option value="Montserrat">Montserrat (Nowoczesna)</option>
+                    <option value="Arial">Arial (Systemowa)</option>
+                  </optgroup>
+                  <optgroup label="Odręczne & Cute">
+                    <option value="Fredoka">Fredoka (Okrągła)</option>
+                    <option value="Caveat">Caveat (Szybkie notatki)</option>
+                    <option value="Pacifico">Pacifico (Płynna)</option>
+                    <option value="Dancing Script">
+                      Dancing Script (Elegancka)
+                    </option>
+                  </optgroup>
+                  <optgroup label="Ozdobne">
+                    <option value="Lobster">Lobster (Nagłówki)</option>
+                    <option value="Playfair Display">
+                      Playfair (Książkowa)
+                    </option>
+                    <option value="Georgia">Georgia (Klasyczna)</option>
+                  </optgroup>
+                  <optgroup label="Techniczne">
+                    <option value="Roboto Mono">Roboto Mono (Kod)</option>
+                    <option value="Courier New">Maszyna do pisania</option>
+                  </optgroup>
+                </select>
+              </div>
+
+              <div class="toolbar-group">
+                <div class="color-palette-container">
+                  <button
+                    class="color-dot-btn"
+                    style="background: #000000"
+                    onclick="formatNote('foreColor', '#000000')"
+                    title="Czarny"
+                  ></button>
+                  <button
+                    class="color-dot-btn"
+                    style="background: #ffffff; border: 1px solid #ddd"
+                    onclick="formatNote('foreColor', '#ffffff')"
+                    title="Biały"
+                  ></button>
+                  <button
+                    class="color-dot-btn"
+                    style="background: #22c55e"
+                    onclick="formatNote('foreColor', '#22c55e')"
+                    title="Zielony"
+                  ></button>
+                  <button
+                    class="color-dot-btn"
+                    style="background: #3b82f6"
+                    onclick="formatNote('foreColor', '#3b82f6')"
+                    title="Niebieski"
+                  ></button>
+                  <button
+                    class="color-dot-btn"
+                    style="background: #ef4444"
+                    onclick="formatNote('foreColor', '#ef4444')"
+                    title="Czerwony"
+                  ></button>
+                  <button
+                    class="color-dot-btn"
+                    style="background: #facc15"
+                    onclick="formatNote('foreColor', '#facc15')"
+                    title="Żółty"
+                  ></button>
+                  <button
+                    class="color-dot-btn"
+                    style="background: #f97316"
+                    onclick="formatNote('foreColor', '#f97316')"
+                    title="Pomarańczowy"
+                  ></button>
+                </div>
+              </div>
+
+              <div class="toolbar-group">
+                <select
+                  class="style-select"
+                  id="theme-select"
+                  onchange="setNoteTheme(this.value)"
+                  title="Kolor kartki"
+                >
+                  <option value="white">⚪ Biała</option>
+                  <option value="dark">⚫ Ciemna</option>
+                  <option value="pink">🌸 Różowa</option>
+                  <option value="sage">🌿 Zielona</option>
+                </select>
+                <button
+                  onclick="deleteNotePage()"
+                  class="tool-btn"
+                  style="color: #ef4444"
+                  title="Usuń obecną stronę"
+                >
+                  🗑
+                </button>
+              </div>
+            </div>
+
+            <div class="desk-area">
+              <div id="note-paper" class="paper-lined theme-white">
+                <div
+                  id="note-editor"
+                  contenteditable="true"
+                  oninput="saveCurrentPage()"
+                  spellcheck="false"
+                ></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="work-content-materials" class="hidden">
+            <div
+              class="section-header"
+              style="justify-content: center; margin-top: 20px"
+            >
+              <button
+                onclick="openMaterialTypeModal()"
+                class="btn-add"
+                style="padding: 15px 30px; font-size: 18px"
+              >
+                + Dodaj materiał (Fiszki / Quiz)
+              </button>
+            </div>
+            <div id="sets-list" class="card-stack-container"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="section-shop" class="view-section hidden">
+        <div class="section-header">
+          <h2>Sklep 🛍️</h2>
+          <div class="currency-display">
+            💎 <span id="shop-coin-display"></span>
+          </div>
+        </div>
+        <div id="shop-landing" class="shop-categories-container">
+          <div
+            class="shop-cat-card pink-gradient"
+            onclick="openShopCategory('furniture')"
+          >
+            <div class="cat-icon">🛋️</div>
+            <h3>Do Pokoju</h3>
+          </div>
+          <div
+            class="shop-cat-card purple-gradient"
+            onclick="openShopCategory('clothes')"
+          >
+            <div class="cat-icon">🐼</div>
+            <h3>Dla Pandy</h3>
+          </div>
+          <div
+            class="shop-cat-card gold-gradient"
+            onclick="openShopCategory('rare')"
+          >
+            <div class="cat-icon">✨</div>
+            <h3>Rzadkie</h3>
+          </div>
+        </div>
+        <div id="shop-items-view" class="hidden">
+          <div class="section-header">
+            <button onclick="closeShopCategory()" class="btn-back-shop">
+              ⬅ Kategorie
+            </button>
+            <h3 id="shop-cat-title" style="margin-left: 20px">Kategoria</h3>
+          </div>
+          <div id="shop-grid" class="classic-grid"></div>
+        </div>
+      </section>
+
+      <section id="section-casino" class="view-section hidden">
+        <div class="section-header">
+          <h2>Casino</h2>
+          <div class="currency-display">
+            💎 <span id="casino-coin-display">0</span>
+          </div>
+        </div>
+
+        <div id="casino-lobby" class="casino-lobby-container">
+          <div class="game-card gold-border" onclick="openGame('roulette')">
+            <div class="game-icon">🎡</div>
+            <h3>Ruletka</h3>
+            <button class="btn-play">GRAJ ▶</button>
+          </div>
+          <div class="game-card" onclick="openGame('blackjack')">
+            <div class="game-icon">🃏</div>
+            <h3>Blackjack</h3>
+            <button class="btn-play">GRAJ ▶</button>
+          </div>
+        </div>
+
+        <div id="game-roulette" class="hidden">
+          <button onclick="backToLobby()" class="btn-back">◀ Wyjdź</button>
+
+          <div class="roulette-table-mat">
+            <div class="wheel-wrapper">
+              <div class="wheel-pointer"></div>
+              <div id="roulette-wheel" class="roulette-wheel"></div>
+              <div id="roulette-result-number" class="wheel-center-overlay">?</div>
+            </div>
+
+            <p id="roulette-msg" class="game-msg">
+              Postaw zakład i zakręć kołem!
+            </p>
+
+            <div class="betting-board casino-style">
+              <div class="bet-input-box dark-theme">
+                <label for="roulette-bet-amount">Stawka</label>
+                <input
+                  type="number"
+                  id="roulette-bet-amount"
+                  value="10"
+                  min="1"
+                />
+              </div>
+
+              <div class="bet-buttons-row">
+                <button class="bet-btn btn-red" onclick="spinRoulette('red')">
+                  Czerwone
+                </button>
+                <button
+                  class="bet-btn btn-black"
+                  onclick="spinRoulette('black')"
+                >
+                  Czarne
+                </button>
+                <button
+                  class="bet-btn btn-green"
+                  onclick="spinRoulette('green')"
+                >
+                  Zero
+                </button>
+              </div>
+
+              <div class="number-bet-row dark-theme">
+                <input
+                  type="number"
+                  id="roulette-bet-number"
+                  value="7"
+                  min="0"
+                  max="36"
+                  placeholder="0-36"
+                />
+                <button
+                  class="bet-btn btn-number"
+                  onclick="spinRoulette('number')"
+                >
+                  Twój numer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="game-blackjack" class="hidden">
+          <button onclick="backToLobby()" class="btn-back">◀ Wyjdź</button>
+
+          <div id="bj-bet-box" class="bet-controls">
+            <input type="number" id="bj-bet-amount" value="10" min="1" />
+            <button
+              id="btn-bj-deal"
+              onclick="startBlackjackRound()"
+              class="btn-primary"
+            >
+              ROZDAJ
+            </button>
+          </div>
+
+          <div id="bj-table" class="blackjack-table">
+            <div class="dealer-area bj-row">
+              <span class="bj-label">Krupier</span>
+              <div id="dealer-cards" class="cards-slot bj-cards-container"></div>
+              <h4>
+                Krupier: <span id="dealer-score" class="bj-score-bubble">0</span>
+              </h4>
+            </div>
+
+            <div id="bj-message" class="bj-message">Powodzenia!</div>
+
+            <div class="player-area bj-row">
+              <h4>
+                Ty: <span id="player-score" class="bj-score-bubble">0</span>
+              </h4>
+              <div id="player-cards" class="cards-slot bj-cards-container"></div>
+              <span class="bj-label">Ty</span>
+            </div>
+          </div>
+
+          <div id="bj-actions" class="hidden">
+            <button
+              id="btn-bj-hit"
+              onclick="hitBlackjack()"
+              class="btn-primary"
+            >
+              DOBIERZ
+            </button>
+            <button
+              id="btn-bj-stand"
+              onclick="standBlackjack()"
+              class="btn-warning"
+            >
+              PASUJE
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-flashcard-player" class="view-section hidden">
+        <div class="section-header modal-header-styled">
+          <div class="header-actions">
+            <button
+              id="flashcard-back-btn"
+              onclick="closeFlashcardPlayer()"
+              class="btn-back"
+            >
+              ◀ Wróć
+            </button>
+
+            <button
+              id="enter-focus-btn"
+              onclick="toggleFlashcardFullscreen(true)"
+              class="panda-btn-exit"
+              style="margin-left: 10px"
+            >
+              <span class="material-symbols-rounded">fullscreen</span> Tryb
+              Skupienia
+            </button>
+
+            <button
+              id="exit-focus-btn"
+              onclick="toggleFlashcardFullscreen(false)"
+              class="btn-focus-exit-stylish hidden"
+            >
+              <span class="material-symbols-rounded">close_fullscreen</span>
+              Wyjdź ze Skupienia
+              <span class="material-symbols-rounded">close_fullscreen</span>
+            </button>
+          </div>
+
+          <div class="header-title-group">
+            <h2 id="current-set-name">Fiszki</h2>
+            <div id="card-counter">0/0</div>
+          </div>
+        </div>
+
+        <div class="flashcard-stage">
+          <div class="flip-card" onclick="flipCard()">
+            <div class="flip-card-inner" id="active-card">
+              <div class="flip-card-front" id="card-front-content"></div>
+              <div class="flip-card-back" id="card-back-content"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="player-controls">
+          <button onclick="prevCard()" class="control-btn">◀</button>
+          <button
+            onclick="flipCard()"
+            class="control-btn"
+            style="background: var(--primary); color: white"
+          >
+            Obróć
+          </button>
+          <button onclick="nextCard()" class="control-btn">▶</button>
+        </div>
+
+        <div class="add-flashcard-box">
+          <div class="creator-group">
+            <label>Pytanie</label>
+            <textarea
+              id="new-card-q"
+              placeholder="Wpisz pytanie lub wklej screena..."
+            ></textarea>
+
+            <div id="preview-q-cont" class="hidden preview-container">
+              <img id="preview-q-img" alt="Podgląd pytania" />
+              <button
+                type="button"
+                class="btn-remove-img"
+                onclick="clearPastedImg('q')"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+
+          <div class="creator-group">
+            <label>Odpowiedź</label>
+            <textarea
+              id="new-card-a"
+              placeholder="Wpisz odpowiedź lub wklej screena..."
+            ></textarea>
+
+            <div id="preview-a-cont" class="hidden preview-container">
+              <img id="preview-a-img" alt="Podgląd odpowiedzi" />
+              <button
+                type="button"
+                class="btn-remove-img"
+                onclick="clearPastedImg('a')"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+
+          <button onclick="addCardToSetInline()" class="btn-add-inline">
+            Dodaj Fiszkę
+          </button>
+        </div>
+      </section>
+
+      <section id="view-quiz-player" class="view-section hidden">
+        <div class="quiz-player-layout">
+          <div class="quiz-header-fixed">
+            <button onclick="closeQuizPlayer()" class="panda-btn-exit">
+              <span class="material-symbols-rounded">close</span> Wyjdź
+            </button>
+            <div class="quiz-progress-wrapper">
+              <div id="quiz-progress-bar" class="quiz-progress-fill"></div>
+            </div>
+            <h1 id="quiz-player-name" class="quiz-title-display">
+              Nazwa Quizu
+            </h1>
+          </div>
+
+          <div class="quiz-question-container">
+            <div id="quiz-question-box" class="quiz-card-modern">
+              <div class="q-badge">
+                Pytanie <span id="q-current-idx">1</span> z
+                <span id="q-total-count">?</span>
+              </div>
+              <h2 id="quiz-question-text" class="q-text">Wczytywanie...</h2>
+
+              <div id="quiz-options-container" class="quiz-options-grid"></div>
+
+              <div id="quiz-open-container" class="open-input-box hidden">
+                <input
+                  type="text"
+                  id="quiz-open-input"
+                  class="panda-input"
+                  placeholder="Wpisz odpowiedź..."
+                />
+                <button
+                  id="btn-submit-open"
+                  onclick="submitOpenAnswer()"
+                  class="panda-btn-confirm"
+                >
+                  Zatwierdź
+                </button>
+              </div>
+
+              <div
+                id="quiz-controls"
+                class="hidden"
+                style="
+                  margin-top: 20px;
+                  width: 100%;
+                  display: flex;
+                  justify-content: center;
+                "
+              ></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="custom-modal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <h3 id="modal-title">Tworzenie</h3>
+
+        <div class="modal-inputs">
+          <label>Nazwa:</label>
+          <input
+            type="text"
+            id="modal-input-name"
+            placeholder="Wpisz nazwę..."
+          />
+
+          <input type="hidden" id="modal-input-icon" value="📝" />
+          <input type="hidden" id="modal-input-color" value="#ec4899" />
+
+          <label style="margin-top: 15px; display: block">Wybierz ikonę:</label>
+          <div id="modal-emoji-picker" class="emoji-grid-scroll">
+            <span onclick="selectEmoji(this, '📚')">📚</span>
+            <span onclick="selectEmoji(this, '📓')">📓</span>
+            <span onclick="selectEmoji(this, '🐼')">🐼</span>
+            <span onclick="selectEmoji(this, '🎨')">🎨</span>
+            <span onclick="selectEmoji(this, '🧪')">🧪</span>
+            <span onclick="selectEmoji(this, '🧬')">🧬</span>
+            <span onclick="selectEmoji(this, '🌍')">🌍</span>
+            <span onclick="selectEmoji(this, '📐')">📐</span>
+            <span onclick="selectEmoji(this, '❗️')">❗️</span>
+            <span onclick="selectEmoji(this, '🧠')">🧠</span>
+            <span onclick="selectEmoji(this, '💻')">💻</span>
+            <span onclick="selectEmoji(this, '💡')">💡</span>
+          </div>
+
+          <label style="margin-top: 15px; display: block">Kolor motywu:</label>
+          <div class="color-presets" id="modal-color-picker">
+            <div
+              class="color-dot active"
+              style="background: #ec4899"
+              onclick="selectColor(this, '#ec4899')"
+            ></div>
+            <div
+              class="color-dot"
+              style="background: #8b5cf6"
+              onclick="selectColor(this, '#8b5cf6')"
+            ></div>
+            <div
+              class="color-dot"
+              style="background: #3b82f6"
+              onclick="selectColor(this, '#3b82f6')"
+            ></div>
+            <div
+              class="color-dot"
+              style="background: #10b981"
+              onclick="selectColor(this, '#10b981')"
+            ></div>
+            <div
+              class="color-dot"
+              style="background: #f59e0b"
+              onclick="selectColor(this, '#f59e0b')"
+            ></div>
+            <div
+              class="color-dot"
+              style="background: #ef4444"
+              onclick="selectColor(this, '#ef4444')"
+            ></div>
+            <div
+              class="color-dot"
+              style="background: #64748b"
+              onclick="selectColor(this, '#64748b')"
+            ></div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" onclick="closeModal()" class="btn-cancel">
+            Anuluj
+          </button>
+          <button onclick="saveModal()" class="btn-confirm">Zapisz</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="confirm-modal" class="modal-overlay hidden">
+      <div class="modal-content confirm-box">
+        <p id="confirm-msg">Czy na pewno?</p>
+        <div class="modal-actions">
+          <button onclick="closeConfirm(false)" class="btn-cancel">Nie</button>
+          <button onclick="closeConfirm(true)" class="btn-confirm">Tak</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="quiz-creator-modal" class="modal-overlay hidden">
+      <div class="modal-content quiz-creator-content">
+        <div class="quiz-creator-header">
+          <h3>Konfiguracja Quizu</h3>
+
+          <div class="quiz-meta-settings">
+            <div class="input-group">
+              <input
+                type="text"
+                id="quiz-name-input"
+                placeholder="Nazwa quizu..."
+                class="quiz-input-styled"
+              />
+            </div>
+            <div class="input-group">
+              <select id="quiz-setting-mode" class="quiz-input-styled">
+                <option value="immediate">Tryb Nauki</option>
+                <option value="test">Tryb Testu</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="custom-picker-row">
+            <div class="picker-group">
+              <span class="picker-label">MOTYW</span>
+              <div id="quiz-color-picker" class="color-presets">
+                <div
+                  class="color-dot"
+                  style="background: #ec4899"
+                  onclick="selectQuizColor(this, '#ec4899')"
+                ></div>
+                <div
+                  class="color-dot"
+                  style="background: #8b5cf6"
+                  onclick="selectQuizColor(this, '#8b5cf6')"
+                ></div>
+                <div
+                  class="color-dot"
+                  style="background: #3b82f6"
+                  onclick="selectQuizColor(this, '#3b82f6')"
+                ></div>
+                <div
+                  class="color-dot"
+                  style="background: #10b981"
+                  onclick="selectQuizColor(this, '#10b981')"
+                ></div>
+                <div
+                  class="color-dot"
+                  style="background: #f59e0b"
+                  onclick="selectQuizColor(this, '#f59e0b')"
+                ></div>
+                <div
+                  class="color-dot"
+                  style="background: #ef4444"
+                  onclick="selectQuizColor(this, '#ef4444')"
+                ></div>
+              </div>
+              <input type="hidden" id="quiz-color-input" value="#ec4899" />
+            </div>
+
+            <div class="picker-group">
+              <span class="picker-label">IKONA</span>
+              <div id="quiz-emoji-picker" class="emoji-selector">
+                <div class="emoji-opt" onclick="selectQuizEmoji(this, '🐼')">
+                  🐼
+                </div>
+                <div class="emoji-opt" onclick="selectQuizEmoji(this, '🧠')">
+                  🧠
+                </div>
+                <div class="emoji-opt" onclick="selectQuizEmoji(this, '🧪')">
+                  🧪
+                </div>
+                <div class="emoji-opt" onclick="selectQuizEmoji(this, '🎀')">
+                  🎀
+                </div>
+                <div class="emoji-opt" onclick="selectQuizEmoji(this, '📚')">
+                  📚
+                </div>
+                <div class="emoji-opt" onclick="selectQuizEmoji(this, '🧬')">
+                  🧬
+                </div>
+                <div class="emoji-opt" onclick="selectQuizEmoji(this, '🌍')">
+                  🌍
+                </div>
+                <div class="emoji-opt" onclick="selectQuizEmoji(this, '🍓')">
+                  🍓
+                </div>
+                <div class="emoji-opt" onclick="selectQuizEmoji(this, '❗️')">
+                  ❗️
+                </div>
+              </div>
+              <input type="hidden" id="quiz-icon-input" value="📝" />
+            </div>
+          </div>
+        </div>
+
+        <div
+          id="quiz-questions-list-creator"
+          class="questions-scroll-area"
+        ></div>
+
+        <div class="quiz-creator-footer">
+          <div class="add-buttons-group">
+            <button
+              type="button"
+              onclick="addQuestionToCreator('closed')"
+              class="btn-add-q"
+            >
+              + Zamknięte
+            </button>
+            <button
+              type="button"
+              onclick="addQuestionToCreator('open')"
+              class="btn-add-q"
+            >
+              + Otwarte
+            </button>
+          </div>
+
+          <div
+            style="
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              gap: 20px;
+            "
+          >
+            <button
+              type="button"
+              onclick="closeQuizCreator()"
+              class="btn-cancel"
+            >
+              Anuluj
+            </button>
+            <button
+              type="button"
+              onclick="saveCreatedQuiz()"
+              class="btn-confirm"
+            >
+              Stwórz Quiz
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="material-type-modal" class="modal-overlay hidden">
+      <div class="modal-content" style="border-radius: 30px; padding: 40px">
+        <h3
+          style="
+            color: #db2777;
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 800;
+          "
+        >
+          Co chcesz stworzyć?
+        </h3>
+        <p style="color: #94a3b8; font-weight: 600; margin-bottom: 25px">
+          Wybierz format nauki:
+        </p>
+
+        <div class="material-choice-grid">
+          <div
+            class="choice-card flashcards"
+            onclick="confirmMaterialType('flashcard')"
+          >
+            <div class="icon">📇</div>
+            <span>Zestaw Fiszek</span>
+          </div>
+
+          <div
+            class="choice-card quizzes"
+            onclick="confirmMaterialType('quiz')"
+          >
+            <div class="icon">📝</div>
+            <span>Nowy Quiz</span>
+          </div>
+        </div>
+
+        <button onclick="closeMaterialTypeModal()" class="panda-cancel-btn">
+          Anuluj
+        </button>
+      </div>
+    </div>
+
+    <div id="toast-container"></div>
+    <script src="java/other.js"></script>
+    <script src="java/main.js"></script>
+    <script src="java/notes.js"></script>
+    <script src="java/casino.js"></script>
+    <script src="java/shop.js"></script>
+  </body>
+</html>
